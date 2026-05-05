@@ -4,9 +4,11 @@ package org.example.ecommerce.Model;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import org.springframework.context.annotation.Primary;
 
 @Data
 @AllArgsConstructor
+//@Primary
 public class Product {
     //    * id (must not be empty).
     @NotEmpty(message = "Id can not be empty")
@@ -22,6 +24,7 @@ public class Product {
     private String categorylD;
 
     //new attribute
+    @PositiveOrZero(message = "sales count can not be negative")
     private int salesCount;
 
 }

@@ -3,11 +3,14 @@ package org.example.ecommerce.Model;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.springframework.context.annotation.Primary;
 
 import java.util.ArrayList;
 
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 public class User {
 
 //    * id (must not be empty).
@@ -40,6 +43,6 @@ public class User {
     @PositiveOrZero(message = "Balance must be positive")
     private Double balance;
 
-//    ArrayList<Product> cart;
+    private ArrayList<Product> cart=new ArrayList<>();
 
 }

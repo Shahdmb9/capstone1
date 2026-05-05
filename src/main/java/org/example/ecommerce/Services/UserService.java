@@ -2,11 +2,16 @@ package org.example.ecommerce.Services;
 
 
 import lombok.RequiredArgsConstructor;
+import org.example.ecommerce.ApiResponse.ApiResponse;
 import org.example.ecommerce.Model.Merchant;
 import org.example.ecommerce.Model.MerchantStock;
 import org.example.ecommerce.Model.Product;
 import org.example.ecommerce.Model.User;
+import org.springframework.core.PriorityOrdered;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
 
 import java.util.ArrayList;
 
@@ -114,6 +119,84 @@ public class UserService {
         return adminUsers;
     }
 
+    public  int addProductToCart(String userid,String productid,String merchantid) {
+        Product p=productService.productExists(productid);
 
+        if(p==null) {
+            return 0;
+        }
+
+        Merchant m =merchantService.getMerchant(merchantid);
+        if(m==null) {
+            return 1;
+        }
+
+        User user=getUser(userid);
+        if(user==null) {
+            return 2;
+        }
+
+        MerchantStock merchantStock=merchantStockService.getMerchantStock(productid,merchantid);
+        if(merchantStock==null) {
+            return 3;
+        }
+        if(merchantStock.getStock()==0)
+            return 4;
+
+        user.getCart().add(p);
+        return 5;
+    }
+
+    public boolean deleteProductFromCart(String userid,String productid) {
+        for(User u : users) {
+           if(u.getId().equals(userid)) {
+               for(Product p : u.getCart()) {
+                   if(p.getId().equals(productid)) {
+                       u.getCart().remove(p);
+                       return true;
+                   }
+               }
+           }
+        }
+        return false;
+    }
+
+    public  ArrayList<Product> getUserCart(String userid) {
+
+        User user=getUser(userid);
+        if(user==null) {
+            return null;
+        }
+        return user.getCart();
+    }
+
+    //helper
+    public User getUserById(String id){
+        for(User u : users) {
+            if(u.getId().equals(id)) {
+                return u;
+            }
+        }
+        return null;
+    }
+
+    public int applyDiscount(String userid,int discount){
+        User user=getUser(userid);
+        if(user==null) {
+            return 0;
+        }
+        if(!user.getRole().equalsIgnoreCase("admin")) {
+            return 1;
+        }
+
+        if(productService.getProducts().isEmpty())
+            return 2;
+
+        for(Product p:productService.getProducts()){
+            double newPrice=p.getPrice()*discount/100;
+            p.setPrice(p.getPrice()-newPrice);
+        }
+        return 4;
+    }
 
 }

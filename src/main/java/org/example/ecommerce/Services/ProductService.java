@@ -21,15 +21,11 @@ public class ProductService {
     }
 
     public int addProduct(Product product) {
-        ArrayList<Category> categories = categoryService.getCategories();
         if (!categoryExists(product.getCategorylD()))
             return 0;//no category with this id
 
-        for (Product p : products) {
-            if (product.getId().equals(p.getId())) {
-                return 1;//product with same id exist
-            }
-        }
+        if(productExists(product.getId())!=null)
+            return 1;
         products.add(product);
         return 2;
     }
@@ -89,7 +85,7 @@ public class ProductService {
     public ArrayList<Product> getProductsByName(String name){
         ArrayList<Product> productsByName=new ArrayList<>();
         for(Product p:products){
-            if(p.getName().matches(name))
+            if(p.getName().toLowerCase().contains(name.toLowerCase()))
                 productsByName.add(p);
         }
         return productsByName;
@@ -106,61 +102,37 @@ public class ProductService {
     public List<Product> sortProductsFromCheapToExpensive(){
         if(products.isEmpty())
             return null;
-        List<Product> sortedProducts = products.stream()
-                .sorted(Comparator.comparingDouble(Product::getPrice))
-                .collect(Collectors.toList());
+        List<Product> sortedProducts = new ArrayList<>(products);
+        Collections.sort(sortedProducts, Comparator.comparingDouble(Product::getPrice));
         return sortedProducts;
     }
 
     public List<Product> sortProductsFromExpensiveToCheap(){
         if(products.isEmpty())
             return null;
-        List<Product> sortedProducts = products.stream()
-                .sorted(Comparator.comparingDouble(Product::getPrice).reversed())
-                .collect(Collectors.toList());
+        List<Product> sortedProducts = new ArrayList<>(products);
+        Collections.sort(sortedProducts, Comparator.comparingDouble(Product::getPrice).reversed());
         return sortedProducts;
     }
 
 
-
-//    public Product mostSales(){
-//        if(products.isEmpty())
-//            return null;
-//        Product mostSales=products.get(0);
-//        for(Product p:products){
-//            if(p.getSalesCount()>mostSales.getSalesCount())
-//                mostSales=p;
-//        }
-//        return mostSales;
-//    }
-//    public Product mostSalesInCategory(String category){
-//        ArrayList<Product> productsByCategory=getProductsByCategory(category);
-//        if(productsByCategory == null)
-//            return null;
-//        if(productsByCategory.isEmpty())
-//            return null;
-//        Product mostSales=productsByCategory.get(0);
-//        for(Product p:productsByCategory){
-//            if(p.getSalesCount()>mostSales.getSalesCount())
-//                mostSales=p;
-//        }
-//        return mostSales;
-//    }
-
     public List<Product> mostThreeSales(){
-        return products.stream()
-                .sorted(Comparator.comparingInt(Product::getSalesCount).reversed())
-                .limit(3)
-                .collect(Collectors.toList());
+
+        List<Product> sortedProducts = new ArrayList<>(products);
+        Collections.sort(sortedProducts, Comparator.comparingInt(Product::getSalesCount).reversed());
+        return sortedProducts.subList(0, Math.min(3, sortedProducts.size()));
     }
 
     public List<Product> mostThreeSalesInCategory(String category){
-        ArrayList<Product> productsByCategory=getProductsByCategory(category);
-        return productsByCategory.stream()
-                .sorted(Comparator.comparingInt(Product::getSalesCount).reversed())
-                .limit(3)
-                .collect(Collectors.toList());
+        List<Product> sortedProducts = getProductsByCategory(category);
+        if(sortedProducts==null)
+            return null;
+        Collections.sort(sortedProducts, Comparator.comparingInt(Product::getSalesCount).reversed());
+        return sortedProducts.subList(0, Math.min(3, sortedProducts.size()));
+
     }
+
+
 
 
 

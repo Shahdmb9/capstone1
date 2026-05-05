@@ -93,17 +93,59 @@ public class UserController {
         return ResponseEntity.status(200).body(userService.getAdminUsers());
     }
 
-//    @PutMapping("/add-product-to-cart/{userid}/{productid}")
-//    public ResponseEntity<?> addProductToCart(@PathVariable String userid,@PathVariable String productid) {
-//        switch (userService.addProductToCart(userid,productid)){
-//            case 0:
-//                return ResponseEntity.status(400).body(new ApiResponse("product not found"));
-//            case 1:
-//                return ResponseEntity.status(400).body(new ApiResponse("User not found"));
-//            default:
-//                return ResponseEntity.status(200).body(new ApiResponse("product added to the cat"));
-//        }
-//    }
+    @PutMapping("/add-product-to-cart/{userid}/{productid}/{merchantid}")
+    public ResponseEntity<?> addProductToCart(@PathVariable String userid,@PathVariable String productid,@PathVariable String merchantid) {
+        switch (userService.addProductToCart(userid,productid,merchantid)){
+            case 0:
+                return ResponseEntity.status(400).body(new ApiResponse("product not found"));
+            case 1:
+                return ResponseEntity.status(400).body(new ApiResponse("No Merchant found"));
+            case 2:
+                return ResponseEntity.status(400).body(new ApiResponse("User not found"));
+            case 3,4:
+                return ResponseEntity.status(400).body(new ApiResponse("No stock for this product"));
+            default:
+                return ResponseEntity.status(200).body(new ApiResponse("product added to the cat"));
+        }
+    }
+
+    @PutMapping("/delete-product-from-cart/{userid}/{productid}")
+    public ResponseEntity<?> deleteProductFromCart(@PathVariable String userid,@PathVariable String productid) {
+        if(userService.deleteProductFromCart(userid,productid)) {
+            return ResponseEntity.status(200).body(new ApiResponse("Product deleted successfully"));
+        }
+        return ResponseEntity.status(400).body(new ApiResponse("User not found"));
+    }
+
+    @GetMapping("/get-user-cart/{userid}")
+    public ResponseEntity<?> getUserCart(@PathVariable String userid) {
+        if(userService.getUserCart(userid)==null) {
+            return ResponseEntity.status(200).body(new ApiResponse("User not found"));
+        }
+        if(userService.getUserCart(userid).isEmpty()) {
+            return ResponseEntity.status(400).body(new ApiResponse("User cart is empty"));
+        }
+        return ResponseEntity.status(200).body(userService.getUserCart(userid));
+    }
+
+    @PutMapping("/price-discount/{userid}/{discount}")
+    public ResponseEntity<?> priceDiscount(@PathVariable String userid,@PathVariable int discount){
+        if(discount<0) {
+            return ResponseEntity.status(400).body(new ApiResponse("discount must be positive"));
+        }
+        switch(userService.applyDiscount(userid,discount)){
+            case 0:
+                return ResponseEntity.status(400).body(new ApiResponse("User not found"));
+            case 1:
+                return ResponseEntity.status(400).body(new ApiResponse("You dont have permission to apply discount"));
+            case 2:
+                return ResponseEntity.status(400).body(new ApiResponse("no products found"));
+            default:
+                return ResponseEntity.status(200).body(new ApiResponse("discount applied successfully"));
+        }
+
+
+    }
 
 
 }

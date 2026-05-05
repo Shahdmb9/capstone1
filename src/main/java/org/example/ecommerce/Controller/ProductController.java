@@ -30,6 +30,8 @@ public class ProductController {
     public ResponseEntity<?> addProduct(@RequestBody @Valid Product product, Errors errors) {
         if(errors.hasErrors())
             return ResponseEntity.status(400).body(errors.getFieldError().getDefaultMessage());
+        if(product.getSalesCount()>0)
+            return ResponseEntity.status(400).body(new ApiResponse("Product sales must be 0 on adding "));
 
         switch (productService.addProduct(product)) {
             case 0:
@@ -119,8 +121,12 @@ public class ProductController {
 
     @GetMapping("/get-most-sales/{category}")
     public ResponseEntity<?> getMostSalesByCategory(@PathVariable String category){
+        if(productService.getProductsByCategory(category)==null)
+            return ResponseEntity.status(400).body(new ApiResponse("No category called "+category));
         if(!productService.mostThreeSalesInCategory(category).isEmpty())
             return ResponseEntity.status(200).body(productService.mostThreeSalesInCategory(category));
         return ResponseEntity.status(400).body(new ApiResponse("No product found"));
     }
+
+
 }

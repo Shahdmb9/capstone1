@@ -134,6 +134,16 @@ public class MerchantStockService {
 
     }
 
+    public ArrayList<Merchant> getMerchantProvideProduct(String productId){
+        ArrayList<Merchant> merchant=new ArrayList<>();
+        for(MerchantStock merchantStock:merchantStocks){
+            if(merchantStock.getProductid().equals(productId)&&merchantStock.getStock()>0){
+                merchant.add(merchantService.getMerchant(merchantStock.getMerchantid()));
+            }
+        }
+        return merchant;
+    }
+
     //helper
     public boolean merchanthasStock(String metchantid){
         for(MerchantStock merchantStock:merchantStocks){
