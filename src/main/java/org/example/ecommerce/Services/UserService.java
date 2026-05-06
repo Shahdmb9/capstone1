@@ -169,17 +169,6 @@ public class UserService {
         }
         return user.getCart();
     }
-
-    //helper
-    public User getUserById(String id){
-        for(User u : users) {
-            if(u.getId().equals(id)) {
-                return u;
-            }
-        }
-        return null;
-    }
-
     public int applyDiscount(String userid,int discount){
         User user=getUser(userid);
         if(user==null) {
@@ -198,5 +187,48 @@ public class UserService {
         }
         return 4;
     }
+
+    public double priceAmountLimitForDiscount(String userid){
+        if(calculateTotalPrice(userid)>500){
+            return calculateTotalPrice(userid)-(calculateTotalPrice(userid)*20/100);
+        }
+        return calculateTotalPrice(userid);
+    }
+
+    public Double calculateTotalPrice(String userid) {
+
+        User user=getUser(userid);
+        if(user==null) {
+            return null;
+        }
+        if(user.getCart().isEmpty())
+            return 0.0;
+        double total=0.0;
+        for(Product p:user.getCart()) {
+            total+=p.getPrice();
+        }
+        return total;
+    }
+
+//    public Double calculateTotalPrice(String userid) {
+//
+//        User user=getUser(userid);
+//        if(user==null) {
+//            return 0.0;
+//        }
+//        if(user.getCart().isEmpty())
+//            return null;
+//        double total=0.0;
+//        for(Product p:user.getCart()) {
+//            total+=p.getPrice();
+//        }
+//        if(total>=500){
+//            return total-(total*20/100);
+//        }
+//        return total;
+//    }
+
+
+
 
 }

@@ -99,10 +99,10 @@ public class MerchantStockController {
             return ResponseEntity.status(400).body(new ApiResponse("No product for this Merchant"));
         return ResponseEntity.status(200).body(merchantStockService.getProductBymetchant(id));
     }
-    @GetMapping("/get-merchant-provide-product/{id}")
-    public ResponseEntity<?> getMerchantProvideProduct(@PathVariable String id){
-        if(merchantStockService.getMerchantProvideProduct(id).isEmpty())
+    @GetMapping("/get-Product-merchant/{id}")
+    public ResponseEntity<?> getProductMerchant(@PathVariable String id){
+        if(merchantStockService.getProductMerchant(id).isEmpty())
             return ResponseEntity.status(400).body(new ApiResponse("No merchant provide this product"));
-        return ResponseEntity.status(200).body(merchantStockService.getMerchantProvideProduct(id));
+        return ResponseEntity.status(200).body(merchantStockService.getProductMerchant(id));
     }
 }

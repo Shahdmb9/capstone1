@@ -8,6 +8,8 @@ import org.example.ecommerce.Model.Product;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -94,8 +96,12 @@ public class MerchantStockService {
         }
         MerchantStock merchantStock= getMerchantStock(productid,merchanrid);
         if(merchantStock==null){
-            merchantStocks.add(new MerchantStock(Math.random()+"",productid,merchanrid,stock));
-        }
+            int added;
+            do {
+                 added=addMerchantStock(new MerchantStock((int) (Math.random() * 100) + "", productid, merchanrid, stock));
+
+            }while(added==2);
+            }
         else
             merchantStock.setStock(merchantStock.getStock()+stock);
         return 2;
@@ -104,7 +110,8 @@ public class MerchantStockService {
     //extra
 
     //get all product that are available
-    public ArrayList<Product> getAvailabeProducts(){
+    //chech it
+    public LinkedHashSet<Product> getAvailabeProducts(){
         ArrayList<Product> products=new ArrayList<>();
 
         for(MerchantStock merchantStock:merchantStocks){
@@ -113,7 +120,7 @@ public class MerchantStockService {
                 products.add(p);
             }
         }
-        return products;
+        return new LinkedHashSet<>(products);
     }
 
     public ArrayList<Product> getProductBymetchant(String metchantid){
@@ -134,10 +141,10 @@ public class MerchantStockService {
 
     }
 
-    public ArrayList<Merchant> getMerchantProvideProduct(String productId){
+    public ArrayList<Merchant> getProductMerchant(String productId){
         ArrayList<Merchant> merchant=new ArrayList<>();
         for(MerchantStock merchantStock:merchantStocks){
-            if(merchantStock.getProductid().equals(productId)&&merchantStock.getStock()>0){
+            if(merchantStock.getProductid().equals(productId) && merchantStock.getStock()>0){
                 merchant.add(merchantService.getMerchant(merchantStock.getMerchantid()));
             }
         }

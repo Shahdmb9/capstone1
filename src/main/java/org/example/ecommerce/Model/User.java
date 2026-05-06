@@ -26,7 +26,7 @@ public class User {
 //characters and digits).
     @NotEmpty(message = "Password can not be empty")
     @Size(min = 6, message = "Password should be more than 6")
-//    @Pattern(regexp = "/^(?=.*[a-zA-Z])(?=.*\\d)[a-zA-Z\\d]+$/\n")
+    @Pattern(regexp = "^(?=.*[a-zA-Z])(?=.*\\d).+$")
     private String password;
 //
 //            * email (must not be empty, must be valid email).
@@ -38,7 +38,6 @@ public class User {
     @NotEmpty(message = "Role can not be empty")
     @Pattern(regexp = "(?i)^(Admin|Customer)$")
     private String role;
-//            * balance (must not be empty, have to be positive).
     @NotNull(message = "Balance can not be empty")
     @PositiveOrZero(message = "Balance must be positive")
     private Double balance;

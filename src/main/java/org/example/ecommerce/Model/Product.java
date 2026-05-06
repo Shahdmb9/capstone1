@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Primary;
 @AllArgsConstructor
 //@Primary
 public class Product {
-    //    * id (must not be empty).
+
     @NotEmpty(message = "Id can not be empty")
     private String id;
     @NotEmpty(message = "Name can not be empty")
@@ -19,7 +19,6 @@ public class Product {
     @NotNull
     @PositiveOrZero(message = "price can not be negative")
     private Double price;
-    //
     @NotEmpty(message = "CategorylD can not be empty")
     private String categorylD;
 

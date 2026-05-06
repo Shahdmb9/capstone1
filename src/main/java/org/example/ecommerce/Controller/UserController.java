@@ -70,7 +70,7 @@ public class UserController {
             case 4:
                 return ResponseEntity.status(400).body(new ApiResponse("0 stock for this product"));
             case 5:
-                return ResponseEntity.status(400).body(new ApiResponse("Tour balance is less than product price"));
+                return ResponseEntity.status(400).body(new ApiResponse("Your balance is less than product price"));
             default:
                 return ResponseEntity.status(200).body(new ApiResponse("product bought successfully"));
         }
@@ -144,7 +144,18 @@ public class UserController {
                 return ResponseEntity.status(200).body(new ApiResponse("discount applied successfully"));
         }
 
+    }
 
+    @GetMapping("/get-total-price/{userid}")
+    public ResponseEntity<?> totalPrice(@PathVariable String userid){
+        if(userService.calculateTotalPrice(userid)==null) {
+            return ResponseEntity.status(400).body(new ApiResponse("user not found "));
+        }
+        if(userService.calculateTotalPrice(userid)==0.0)
+            return ResponseEntity.status(200).body(new ApiResponse("cart is empty"));
+        if(userService.calculateTotalPrice(userid)<500)
+            return ResponseEntity.status(200).body(userService.calculateTotalPrice(userid));
+        return ResponseEntity.status(200).body(new ApiResponse("Price before:"+userService.calculateTotalPrice(userid)+"Price after:"+userService.priceAmountLimitForDiscount(userid)));
     }
 
 

@@ -112,15 +112,15 @@ public class ProductController {
         return ResponseEntity.status(200).body(productService.sortProductsFromExpensiveToCheap());
     }
 
-    @GetMapping("/get-most-sales")
-    public ResponseEntity<?> getMostSales(){
+    @GetMapping("/get-best-selling")
+    public ResponseEntity<?> getBestSelling(){
         if(productService.mostThreeSales()!=null)
             return ResponseEntity.status(200).body(productService.mostThreeSales());
         return ResponseEntity.status(400).body(new ApiResponse("No product found"));
     }
 
-    @GetMapping("/get-most-sales/{category}")
-    public ResponseEntity<?> getMostSalesByCategory(@PathVariable String category){
+    @GetMapping("/get-best-selling/{category}")
+    public ResponseEntity<?> getBestSellingByCategory(@PathVariable String category){
         if(productService.getProductsByCategory(category)==null)
             return ResponseEntity.status(400).body(new ApiResponse("No category called "+category));
         if(!productService.mostThreeSalesInCategory(category).isEmpty())
